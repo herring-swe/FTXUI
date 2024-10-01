@@ -47,10 +47,13 @@ function(ftxui_set_options library)
 
   target_compile_features(${library} PUBLIC cxx_std_17)
 
-  # Force Microsoft Visual Studio to decode sources files in UTF-8. This applies
-  # to the library and the library users.
   if (CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
+    # Force Microsoft Visual Studio to decode sources files in UTF-8. This applies
+    # to the library and the library users.
     target_compile_options(${library} PUBLIC "/utf-8")
+
+    # Allow all cores to build
+    target_compile_options(${library} PRIVATE "/MP")
   endif()
 
   # CMake does automatically add -fPIC when linking a shared library, but it
