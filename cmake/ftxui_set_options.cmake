@@ -3,7 +3,11 @@ find_program(CLANG_TIDY_EXE NAMES "clang-tidy" DOC "Path to clang-tidy executabl
 function(ftxui_set_options library)
   set_target_properties(${library} PROPERTIES VERSION ${PROJECT_VERSION})
   if (NOT ${library} MATCHES "ftxui-*")
-    set_target_properties(${library} PROPERTIES OUTPUT_NAME "ftxui-${library}")
+    set_target_properties(${library} PROPERTIES
+      OUTPUT_NAME "ftxui-${library}"
+      OUTPUT_NAME_DEBUG "ftxui-${library}-d"
+      OUTPUT_NAME_RELWITHDEBINFO "ftxui-${library}-rd"
+      OUTPUT_NAME_MINSIZEREL "ftxui-${library}-m")
   endif()
 
   if (FTXUI_CLANG_TIDY)
