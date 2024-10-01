@@ -71,7 +71,6 @@ function(ftxui_set_options library)
       endif()
       target_compile_options(${library} PRIVATE "/wd4244")
       target_compile_options(${library} PRIVATE "/wd4267")
-      target_compile_options(${library} PRIVATE "/D_CRT_SECURE_NO_WARNINGS")
     endif()
     # Force Win32 to UNICODE
     target_compile_definitions(${library} PRIVATE UNICODE _UNICODE)
