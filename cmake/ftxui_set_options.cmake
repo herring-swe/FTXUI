@@ -72,6 +72,8 @@ function(ftxui_set_options library)
       target_compile_options(${library} PRIVATE "/wd4244")
       target_compile_options(${library} PRIVATE "/wd4267")
     endif()
+    # Hide insecure warnings for all compilers on Windows    
+    target_compile_definitions(${library} PRIVATE _CRT_SECURE_NO_WARNINGS)
     # Force Win32 to UNICODE
     target_compile_definitions(${library} PRIVATE UNICODE _UNICODE)
   else()
