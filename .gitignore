@@ -12,6 +12,7 @@ build/
 !.clang-format
 !.clang-tidy
 !.gitignore
+!.gitattributes
 !CHANGELOG.md
 !CMakeLists.txt
 !LICENSE
@@ -25,6 +26,7 @@ build/
 !BUILD.bazel
 !MODULE.bazel
 !.bazelrc
+!conanfile.py
 
 # .github directory:
 !.github/**/*.yaml

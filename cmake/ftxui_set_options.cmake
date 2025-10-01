@@ -60,7 +60,13 @@ function(ftxui_set_options library)
   # does not add it when linking a static library. This is a problem when the 
   # static library is later linked into a shared library. 
   # Doing it helps some users.
-  set_property(TARGET ${library} PROPERTY POSITION_INDEPENDENT_CODE ON)
+  if(CMAKE_TOOLCHAIN_FILE MATCHES "conan_toolchain.cmake$")
+    if (NOT FTXUI_QUIET)
+      message(STATUS "Conan toolchain detected. Not adjusting PIC")
+    endif()
+  else()
+    set_property(TARGET ${library} PROPERTY POSITION_INDEPENDENT_CODE ON)
+  endif()
 
   # Add as many warning as possible:
   if (WIN32)

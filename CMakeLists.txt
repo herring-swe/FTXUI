@@ -178,8 +178,12 @@ include(cmake/ftxui_install.cmake)
 include(cmake/ftxui_package.cmake)
 include(cmake/ftxui_modules.cmake)
 
-add_subdirectory(examples)
-add_subdirectory(doc)
+if(FTXUI_BUILD_EXAMPLES)
+  add_subdirectory(examples)
+endif()
+if(FTXUI_BUILD_DOCS)
+  add_subdirectory(doc)
+endif()
 
 # You can generate ./examples_modules/ by running
 # ./tools/generate_examples_modules.sh

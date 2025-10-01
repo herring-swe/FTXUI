@@ -1,0 +1,2 @@
+# Avoid recipe update due to line endings
+conanfile.py text eol=lf
