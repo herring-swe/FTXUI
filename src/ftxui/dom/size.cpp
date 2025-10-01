@@ -19,7 +19,7 @@ class Size : public Node {
       : Node(unpack(std::move(child))),
         direction_(direction),
         constraint_(constraint),
-        value_(value) {}
+        value_(std::max(0, value)) {}
 
   void ComputeRequirement() override {
     Node::ComputeRequirement();
@@ -81,7 +81,7 @@ class Size : public Node {
 }  // namespace
 
 /// @brief Apply a constraint on the size of an element.
-/// @param direction Whether the WIDTH of the HEIGHT of the element must be
+/// @param direction Whether the WIDTH or the HEIGHT of the element must be
 ///                  constrained.
 /// @param constraint The type of constaint.
 /// @param value The value.

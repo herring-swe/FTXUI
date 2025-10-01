@@ -97,7 +97,11 @@ Color Interpolate(const LinearGradientNormalized& gradient, float t) {
   // Find the right color in the gradient's stops.
   size_t i = 1;
   while (true) {
-    if (i > gradient.positions.size()) {
+    // Note that `t` might be slightly greater than 1.0 due to floating point
+    // precision. This is why we need to handle the case where `t` is greater
+    // than the last stop's position.
+    // See https://github.com/ArthurSonzogni/FTXUI/issues/998
+    if (i >= gradient.positions.size()) {
       const float half = 0.5F;
       return Color::Interpolate(half, gradient.colors.back(),
                                 gradient.colors.back());
@@ -185,13 +189,11 @@ class LinearGradientColor : public NodeDecorator {
 ///    .Stop(Color::Green, 0.5)
 ///    .Stop(Color::Blue, 1.0);;
 /// ```
-/// @ingroup dom
 LinearGradient::LinearGradient() = default;
 
 /// @brief Build a gradient with two colors.
 /// @param begin The color at the beginning of the gradient.
 /// @param end The color at the end of the gradient.
-/// @ingroup dom
 LinearGradient::LinearGradient(Color begin, Color end)
     : LinearGradient(0, begin, end) {}
 
@@ -199,7 +201,6 @@ LinearGradient::LinearGradient(Color begin, Color end)
 /// @param a The angle of the gradient.
 /// @param begin The color at the beginning of the gradient.
 /// @param end The color at the end of the gradient.
-/// @ingroup dom
 LinearGradient::LinearGradient(float a, Color begin, Color end) : angle(a) {
   stops.push_back({begin, {}});
   stops.push_back({end, {}});
@@ -208,7 +209,6 @@ LinearGradient::LinearGradient(float a, Color begin, Color end) : angle(a) {
 /// @brief Set the angle of the gradient.
 /// @param a The angle of the gradient.
 /// @return The gradient.
-/// @ingroup dom
 LinearGradient& LinearGradient::Angle(float a) {
   angle = a;
   return *this;
@@ -217,7 +217,6 @@ LinearGradient& LinearGradient::Angle(float a) {
 /// @brief Add a color stop to the gradient.
 /// @param c The color of the stop.
 /// @param p The position of the stop.
-/// @return The gradient.
 LinearGradient& LinearGradient::Stop(Color c, float p) {
   stops.push_back({c, p});
   return *this;
@@ -226,7 +225,6 @@ LinearGradient& LinearGradient::Stop(Color c, float p) {
 /// @brief Add a color stop to the gradient.
 /// @param c The color of the stop.
 /// @return The gradient.
-/// @ingroup dom
 /// @note The position of the stop is interpolated from nearby stops.
 LinearGradient& LinearGradient::Stop(Color c) {
   stops.push_back({c, {}});

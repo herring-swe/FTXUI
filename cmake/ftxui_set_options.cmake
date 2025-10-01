@@ -91,10 +91,6 @@ function(ftxui_set_options library)
       target_compile_options(${library} PRIVATE "-Wpedantic")
       target_compile_options(${library} PRIVATE "-Wshadow")
       target_compile_options(${library} PRIVATE "-Wunused")
-      
-      if (CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
-        target_compile_options(${library} PRIVATE "-Wuseless-cast")
-      endif()
     endif()
   endif()
 
@@ -113,6 +109,5 @@ endfunction()
 
 if (EMSCRIPTEN)
   string(APPEND CMAKE_CXX_FLAGS " -s USE_PTHREADS")
-  string(APPEND CMAKE_EXE_LINKER_FLAGS " -s ASYNCIFY")
   string(APPEND CMAKE_EXE_LINKER_FLAGS " -s PROXY_TO_PTHREAD")
 endif()

@@ -15,6 +15,8 @@
 #include "ftxui/component/event.hpp"           // for Event
 #include "ftxui/component/screen_interactive.hpp"  // for Component, ScreenInteractive
 #include "ftxui/dom/elements.hpp"                  // for text, Element
+#include "ftxui/dom/node.hpp"                      // for Node, Elements
+#include "ftxui/screen/box.hpp"                    // for Box
 
 namespace ftxui::animation {
 class Params;
@@ -33,26 +35,22 @@ ComponentBase::~ComponentBase() {
 /// @brief Return the parent ComponentBase, or nul if any.
 /// @see Detach
 /// @see Parent
-/// @ingroup component
 ComponentBase* ComponentBase::Parent() const {
   return parent_;
 }
 
 /// @brief Access the child at index `i`.
-/// @ingroup component
 Component& ComponentBase::ChildAt(size_t i) {
   assert(i < ChildCount());  // NOLINT
   return children_[i];
 }
 
 /// @brief Returns the number of children.
-/// @ingroup component
 size_t ComponentBase::ChildCount() const {
   return children_.size();
 }
 
 /// @brief Return index of the component in its parent. -1 if no parent.
-/// @ingroup component
 int ComponentBase::Index() const {
   if (parent_ == nullptr) {
     return -1;
@@ -69,7 +67,6 @@ int ComponentBase::Index() const {
 
 /// @brief Add a child.
 /// @@param child The child to be attached.
-/// @ingroup component
 void ComponentBase::Add(Component child) {
   child->Detach();
   child->parent_ = this;
@@ -79,7 +76,6 @@ void ComponentBase::Add(Component child) {
 /// @brief Detach this child from its parent.
 /// @see Detach
 /// @see Parent
-/// @ingroup component
 void ComponentBase::Detach() {
   if (parent_ == nullptr) {
     return;
@@ -95,7 +91,6 @@ void ComponentBase::Detach() {
 }
 
 /// @brief Remove all children.
-/// @ingroup component
 void ComponentBase::DetachAllChildren() {
   while (!children_.empty()) {
     children_[0]->Detach();
@@ -103,10 +98,44 @@ void ComponentBase::DetachAllChildren() {
 }
 
 /// @brief Draw the component.
-/// Build a ftxui::Element to be drawn on the ftxi::Screen representing this
-/// ftxui::ComponentBase.
-/// @ingroup component
+/// Build a ftxui::Element to be drawn on the ftxui::Screen representing this
+/// ftxui::ComponentBase. Please override OnRender() to modify the rendering.
 Element ComponentBase::Render() {
+  // Some users might call `ComponentBase::Render()` from
+  // `T::OnRender()`. To avoid infinite recursion, we use a flag.
+  if (in_render) {
+    return ComponentBase::OnRender();
+  }
+
+  in_render = true;
+  Element element = OnRender();
+  in_render = false;
+
+  class Wrapper : public Node {
+   public:
+    bool active_ = false;
+
+    Wrapper(Element child, bool active)
+        : Node({std::move(child)}), active_(active) {}
+
+    void SetBox(Box box) override {
+      Node::SetBox(box);
+      children_[0]->SetBox(box);
+    }
+
+    void ComputeRequirement() override {
+      Node::ComputeRequirement();
+      requirement_.focused.component_active = active_;
+    }
+  };
+
+  return std::make_shared<Wrapper>(std::move(element), Active());
+}
+
+/// @brief Draw the component.
+/// Build a ftxui::Element to be drawn on the ftxi::Screen representing this
+/// ftxui::ComponentBase. This function is means to be overridden.
+Element ComponentBase::OnRender() {
   if (children_.size() == 1) {
     return children_.front()->Render();
   }
@@ -119,7 +148,6 @@ Element ComponentBase::Render() {
 /// @return True when the event has been handled.
 /// The default implementation called OnEvent on every child until one return
 /// true. If none returns true, return false.
-/// @ingroup component
 bool ComponentBase::OnEvent(Event event) {  // NOLINT
   for (Component& child : children_) {      // NOLINT
     if (child->OnEvent(event)) {
@@ -132,7 +160,6 @@ bool ComponentBase::OnEvent(Event event) {  // NOLINT
 /// @brief Called in response to an animation event.
 /// @param params the parameters of the animation
 /// The default implementation dispatch the event to every child.
-/// @ingroup component
 void ComponentBase::OnAnimation(animation::Params& params) {
   for (const Component& child : children_) {
     child->OnAnimation(params);
@@ -141,7 +168,6 @@ void ComponentBase::OnAnimation(animation::Params& params) {
 
 /// @brief Return the currently Active child.
 /// @return the currently Active child.
-/// @ingroup component
 Component ComponentBase::ActiveChild() {
   for (auto& child : children_) {
     if (child->Focusable()) {
@@ -154,7 +180,6 @@ Component ComponentBase::ActiveChild() {
 /// @brief Return true when the component contains focusable elements.
 /// The non focusable Components will be skipped when navigating using the
 /// keyboard.
-/// @ingroup component
 bool ComponentBase::Focusable() const {
   for (const Component& child : children_) {  // NOLINT
     if (child->Focusable()) {
@@ -165,7 +190,6 @@ bool ComponentBase::Focusable() const {
 }
 
 /// @brief Returns if the element if the currently active child of its parent.
-/// @ingroup component
 bool ComponentBase::Active() const {
   return parent_ == nullptr || parent_->ActiveChild().get() == this;
 }
@@ -174,7 +198,6 @@ bool ComponentBase::Active() const {
 /// True when the ComponentBase is focused by the user. An element is Focused
 /// when it is with all its ancestors the ActiveChild() of their parents, and it
 /// Focusable().
-/// @ingroup component
 bool ComponentBase::Focused() const {
   const auto* current = this;
   while (current && current->Active()) {
@@ -185,18 +208,15 @@ bool ComponentBase::Focused() const {
 
 /// @brief Make the |child| to be the "active" one.
 /// @param child the child to become active.
-/// @ingroup component
 void ComponentBase::SetActiveChild([[maybe_unused]] ComponentBase* child) {}
 
 /// @brief Make the |child| to be the "active" one.
 /// @param child the child to become active.
-/// @ingroup component
 void ComponentBase::SetActiveChild(Component child) {  // NOLINT
   SetActiveChild(child.get());
 }
 
 /// @brief Configure all the ancestors to give focus to this component.
-/// @ingroup component
 void ComponentBase::TakeFocus() {
   ComponentBase* child = this;
   while (ComponentBase* parent = child->parent_) {
@@ -208,7 +228,6 @@ void ComponentBase::TakeFocus() {
 /// @brief Take the CapturedMouse if available. There is only one component of
 /// them. It represents a component taking priority over others.
 /// @param event The event
-/// @ingroup component
 CapturedMouse ComponentBase::CaptureMouse(const Event& event) {  // NOLINT
   if (event.screen_) {
     return event.screen_->CaptureMouse();

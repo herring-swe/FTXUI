@@ -37,7 +37,7 @@ class ButtonBase : public ComponentBase, public ButtonOption {
   explicit ButtonBase(ButtonOption option) : ButtonOption(std::move(option)) {}
 
   // Component implementation:
-  Element Render() override {
+  Element OnRender() override {
     const bool active = Active();
     const bool focused = Focused();
     const bool focused_or_hover = focused || mouse_hover_;
@@ -47,14 +47,16 @@ class ButtonBase : public ComponentBase, public ButtonOption {
       SetAnimationTarget(target);
     }
 
-    auto focus_management = focused ? focus : active ? select : nothing;
     const EntryState state{
         *label, false, active, focused_or_hover, Index(),
     };
 
     auto element = (transform ? transform : DefaultTransform)  //
         (state);
-    return element | AnimatedColorStyle() | focus_management | reflect(box_);
+    element |= AnimatedColorStyle();
+    element |= focus;
+    element |= reflect(box_);
+    return element;
   }
 
   Decorator AnimatedColorStyle() {
@@ -137,7 +139,6 @@ class ButtonBase : public ComponentBase, public ButtonOption {
  private:
   bool mouse_hover_ = false;
   Box box_;
-  ButtonOption option_;
   float animation_background_ = 0;
   float animation_foreground_ = 0;
   animation::Animator animator_background_ =

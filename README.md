@@ -1,3 +1,4 @@
+
 <p align="center">
   <img src="https://github.com/ArthurSonzogni/FTXUI/assets/4759106/6925b6da-0a7e-49d9-883c-c890e1f36007" alt="Demo image"></img>
   <br/>
@@ -18,7 +19,7 @@
   <br/>
   <a href="https://arthursonzogni.github.io/FTXUI/">Documentation</a> ·
   <a href="https://github.com/ArthurSonzogni/FTXUI/issues">Report a Bug</a> ·
-  <a href="https://arthursonzogni.github.io/FTXUI/examples.html">Examples</a> .
+  <a href="https://arthursonzogni.github.io/FTXUI/examples/">Examples</a> .
   <a href="https://github.com/ArthurSonzogni/FTXUI/issues">Request Feature</a> ·
   <a href="https://github.com/ArthurSonzogni/FTXUI/pulls">Send a Pull Request</a>
 
@@ -39,18 +40,30 @@ A simple cross-platform C++ library for terminal based user interfaces!
  * Support for [UTF8](https://en.wikipedia.org/wiki/UTF-8) and [fullwidth chars](https://en.wikipedia.org/wiki/Halfwidth_and_fullwidth_forms) (→ 测试)
  * Support for animations. [Demo 1](https://arthursonzogni.github.io/FTXUI/examples/?file=component/menu_underline_animated_gallery), [Demo 2](https://arthursonzogni.github.io/FTXUI/examples/?file=component/button_style)
  * Support for drawing. [Demo](https://arthursonzogni.github.io/FTXUI/examples/?file=component/canvas_animated)
- * No dependencies
+ * No dependencies.
+ * [C++20 Module support](https://arthursonzogni.github.io/FTXUI/cpp20-modules.html)
  * **Cross platform**: Linux/MacOS (main target), WebAssembly, Windows (Thanks to contributors!).
  * Learn by [examples](#documentation), and [tutorials](#documentation)
- * Multiple packages: CMake [FetchContent]([https://bewagner.net/programming/2020/05/02/cmake-fetchcontent/](https://cmake.org/cmake/help/latest/module/FetchContent.html)) (preferred), vcpkg, pkgbuild, conan.
+ * Multiple packages:
+     - CMake [FetchContent]([https://bewagner.net/programming/2020/05/02/cmake-fetchcontent/](https://cmake.org/cmake/help/latest/module/FetchContent.html)) (preferred)
+     - [Bazel](https://registry.bazel.build/modules/ftxui)
+     - [vcpkg](https://vcpkg.link/ports/ftxui)
+     - [Conan](https://conan.io/center/recipes/ftxui) [Debian package](https://tracker.debian.org/pkg/ftxui)
+     - [Ubuntu package](https://launchpad.net/ubuntu/+source/ftxui)
+     - [Arch Linux](https://aur.archlinux.org/packages/ftxui/)
+    - [OpenSUSE](https://build.opensuse.org/package/show/devel:libraries:c_c++/ftxui)
+    - [XMake](https://xmake.io) repository [package](https://github.com/xmake-io/xmake-repo/blob/dev/packages/f/ftxui/xmake.lua)
+    - [Nix](https://github.com/ArthurSonzogni/FTXUI/blob/main/flake.nix)
  * Good practices: documentation, tests, fuzzers, performance tests, automated CI, automated packaging, etc...
 
 ## Documentation
 
-- [Starter example project](https://github.com/ArthurSonzogni/ftxui-starter)
+- [Starter CMake](https://github.com/ArthurSonzogni/ftxui-starter)
+- [Starter Bazel](https://github.com/ArthurSonzogni/ftxui-bazel)
 - [Documentation](https://arthursonzogni.github.io/FTXUI/)
 - [Examples (WebAssembly)](https://arthursonzogni.github.io/FTXUI/examples/)
 - [Build using CMake](https://arthursonzogni.github.io/FTXUI/#build-cmake)
+- [Build using Bazel](https://arthursonzogni.github.io/FTXUI/#build-bazel)
 
 ## Example
 ~~~cpp
@@ -86,7 +99,7 @@ Element can be arranged together:
   - inside a grid with `gridbox`
   - wrap along one direction using the `flexbox`.
   
-Element can become flexible using the the `flex` decorator.
+Element can become flexible using the `flex` decorator.
   
 [Example](https://arthursonzogni.github.io/FTXUI/examples_2dom_2vbox_hbox_8cpp-example.html) using `hbox`, `vbox` and `filler`.
 
@@ -109,6 +122,7 @@ Element can become flexible using the the `flex` decorator.
 
 An element can be decorated using the functions:
   - `bold`
+  - `italic`
   - `dim`
   - `inverted`
   - `underlined`
@@ -310,7 +324,6 @@ Feel free to add your projects here:
 - [x86-64 CPU Architecture Simulation](https://github.com/AnisBdz/CPU)
 - [ltuiny](https://github.com/adrianoviana87/ltuiny)
 - [i3-termdialogs](https://github.com/mibli/i3-termdialogs)
-- [Just-Fast](https://github.com/GiuseppeCesarano/just-fast)
 - [simpPRU](https://github.com/VedantParanjape/simpPRU)
 - [Pigeon ROS TUI](https://github.com/PigeonSensei/Pigeon_ros_tui)
 - [hastur](https://github.com/robinlinden/hastur)
@@ -336,6 +349,22 @@ Feel free to add your projects here:
 - [Step-Writer](https://github.com/BrianAnakPintar/step-writer)
 - [XJ music](https://github.com/xjmusic/xjmusic)
 - [UDP chat](https://github.com/Sergeydigl3/udp-chat-tui)
+- [2048-cpp](https://github.com/Chessom/2048-cpp)
+- [Memory game](https://github.com/mikolajlubiak/memory)
+- [Terminal Animation](https://github.com/mikolajlubiak/terminal_animation)
+- [pciex](https://github.com/s0nx/pciex)
+- [Fallout terminal hacking](https://github.com/gshigin/yet-another-fallout-terminal-hacking-game)
+- [Lazylist](https://github.com/zhuyongqi9/lazylist)
+- [TUISIC](https://github.com/Dark-Kernel/tuisic)
+- [inLimbo](https://github.com/nots1dd/inLimbo)
+- [BestEdrOfTheMarket](https://github.com/Xacone/BestEdrOfTheMarket)
+- [terminal-rain](https://github.com/Oakamoore/terminal-rain)
+- [keywords](https://github.com/Oakamoore/keywords) ([Play web version :heart:](https://oakamoore.itch.io/keywords))
+- [FTB - tertminal file browser](https://github.com/Cyxuan0311/FTB)
+- [openJuice](https://github.com/mikomikotaishi/openJuice)
+- [SHOOT!](https://github.com/ShingZhanho/ENGG1340-Project-25Spring)
+- [VerifySN (Fast Hash Tool)](https://github.com/d06i/verifySN)
+- [tic-tac-toe](https://github.com/birland/tic-tac-toe)
 
 ### [cpp-best-practices/game_jam](https://github.com/cpp-best-practices/game_jam)
 
@@ -352,38 +381,69 @@ Several games using the FTXUI have been made during the Game Jam:
 - [smoothlife](https://github.com/cpp-best-practices/game_jam/blob/main/Jam1_April_2022/smoothlife.md)
 - [Consu](https://github.com/cpp-best-practices/game_jam/blob/main/Jam1_April_2022/consu.md)
 
-## Utilization
+## Build using CMake
 
 It is **highly** recommended to use CMake FetchContent to depend on FTXUI so you may specify which commit you would like to depend on.
 ```cmake
 include(FetchContent)
-
 FetchContent_Declare(ftxui
   GIT_REPOSITORY https://github.com/ArthurSonzogni/ftxui
-  GIT_TAG v5.0.0
+  GIT_TAG v6.1.9
 )
+FetchContent_MakeAvailable(ftxui)
 
-FetchContent_GetProperties(ftxui)
-if(NOT ftxui_POPULATED)
-  FetchContent_Populate(ftxui)
-  add_subdirectory(${ftxui_SOURCE_DIR} ${ftxui_BINARY_DIR} EXCLUDE_FROM_ALL)
-endif()
+target_link_libraries(your_target PRIVATE
+    # Chose a submodule
+    ftxui::component
+    ftxui::dom
+    ftxui::screen
+)
 ```
 
+# Build using Bazel
+
+**MODULE.bazel**
+```starlark
+bazel_dep(
+    name = "ftxui",
+    version = "v6.1.9",
+)
+```
+
+**BUILD.bazel**
+```starlark
+cc_binary(
+    name = "your_target",
+    srcs = ["your_source.cc"],
+    deps = [
+        "@ftxui//:ftxui_component",
+        "@ftxui//:ftxui_dom",
+        "@ftxui//:ftxui_screen",
+    ],
+)
+```
+
+
+# Build with something else:
 If you don't, FTXUI may be used from the following packages:
-- [vcpkg](https://vcpkgx.com/details.html?package=ftxui)
-- [Arch Linux PKGBUILD](https://aur.archlinux.org/packages/ftxui-git/).
-- [conan.io](https://conan.io/center/ftxui)
-- [openSUSE](https://build.opensuse.org/package/show/devel:libraries:c_c++/ftxui)
-- 
-[![Packaging status](https://repology.org/badge/vertical-allrepos/ftxui.svg)](https://repology.org/project/ftxui/versions)
+- CMake [FetchContent]([https://bewagner.net/programming/2020/05/02/cmake-fetchcontent/](https://cmake.org/cmake/help/latest/module/FetchContent.html)) (preferred),
+- [Bazel](https://registry.bazel.build/modules/ftxui),
+- [vcpkg](https://vcpkg.link/ports/ftxui),
+- [Conan](https://conan.io/center/recipes/ftxui)
+- [Debian package](https://tracker.debian.org/pkg/ftxui),
+- [Ubuntu package](https://launchpad.net/ubuntu/+source/ftxui),
+- [Arch Linux](https://aur.archlinux.org/packages/ftxui/),
+- [OpenSUSE](https://build.opensuse.org/package/show/devel:libraries:c_c++/ftxui),
+[Nix](https://github.com/ArthurSonzogni/FTXUI/blob/main/flake.nix),
+[![Packaging status](https://repology.org/badge/vertical-allrepos/libftxui.svg)](https://repology.org/project/libftxui/versions)
+
 
 If you choose to build and link FTXUI yourself, `ftxui-component` must be first in the linking order relative to the other FTXUI libraries, i.e.
 ```bash
 g++ . . . -lftxui-component -lftxui-dom -lftxui-screen . . .
 ```
 
-
+To build FTXUI with modules, check [documentation](https://arthursonzogni.github.io/FTXUI/cpp20-modules.html)
 
 ## Contributors
 

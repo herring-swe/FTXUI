@@ -13,16 +13,16 @@ add_executable(ftxui-tests
   src/ftxui/component/component_test.cpp
   src/ftxui/component/component_test.cpp
   src/ftxui/component/container_test.cpp
+  src/ftxui/component/dropdown_test.cpp
   src/ftxui/component/hoverable_test.cpp
   src/ftxui/component/input_test.cpp
   src/ftxui/component/menu_test.cpp
   src/ftxui/component/modal_test.cpp
   src/ftxui/component/radiobox_test.cpp
-  src/ftxui/util/ref_test.cpp
-  src/ftxui/component/receiver_test.cpp
   src/ftxui/component/resizable_split_test.cpp
   src/ftxui/component/screen_interactive_test.cpp
   src/ftxui/component/slider_test.cpp
+  src/ftxui/component/task_test.cpp
   src/ftxui/component/terminal_input_parser_test.cpp
   src/ftxui/component/toggle_test.cpp
   src/ftxui/dom/blink_test.cpp
@@ -38,8 +38,10 @@ add_executable(ftxui-tests
   src/ftxui/dom/gridbox_test.cpp
   src/ftxui/dom/hbox_test.cpp
   src/ftxui/dom/hyperlink_test.cpp
+  src/ftxui/dom/italic_test.cpp
   src/ftxui/dom/linear_gradient_test.cpp
   src/ftxui/dom/scroll_indicator_test.cpp
+  src/ftxui/dom/selection_test.cpp
   src/ftxui/dom/separator_test.cpp
   src/ftxui/dom/spinner_test.cpp
   src/ftxui/dom/table_test.cpp
@@ -48,6 +50,7 @@ add_executable(ftxui-tests
   src/ftxui/dom/vbox_test.cpp
   src/ftxui/screen/color_test.cpp
   src/ftxui/screen/string_test.cpp
+  src/ftxui/util/ref_test.cpp
 )
 
 target_link_libraries(ftxui-tests

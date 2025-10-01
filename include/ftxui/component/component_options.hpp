@@ -9,17 +9,17 @@
 #include <ftxui/dom/direction.hpp>  // for Direction, Direction::Left, Direction::Right, Direction::Down
 #include <ftxui/dom/elements.hpp>  // for Element, separator
 #include <ftxui/util/ref.hpp>      // for Ref, ConstRef, StringRef
-#include <functional>              // for function
-#include <string>                  // for string
+#include <ftxui/util/warn_windows_macro.hpp>
+#include <functional>  // for function
+#include <string>      // for string
 
 #include "ftxui/component/component_base.hpp"  // for Component
 #include "ftxui/screen/color.hpp"  // for Color, Color::GrayDark, Color::White
 
 namespace ftxui {
 
-/// @brief arguments for |ButtonOption::transform|, |CheckboxOption::transform|,
-/// |Radiobox::transform|, |MenuEntryOption::transform|,
-/// |MenuOption::transform|.
+/// @brief arguments for transform from |ButtonOption|, |CheckboxOption|,
+/// |RadioboxOption|, |MenuEntryOption|, |MenuOption|.
 struct EntryState {
   std::string label;  ///< The label to display.
   bool state;         ///< The state of the button/checkbox/radiobox
@@ -28,6 +28,8 @@ struct EntryState {
   int index;          ///< Index of the entry when applicable or -1.
 };
 
+/// @brief Option for the underline effect.
+/// @ingroup component
 struct UnderlineOption {
   bool enabled = false;
 
@@ -228,9 +230,11 @@ struct SliderOption {
   Direction direction = Direction::Right;
   Color color_active = Color::White;
   Color color_inactive = Color::GrayDark;
+  std::function<void()> on_change;  ///> Called when `value` is updated.
 };
 
-// Parameter pack used by `WindowOptions::render`.
+/// @brief State passed to the `Window` component's render function.
+/// @ingroup component
 struct WindowRenderState {
   Element inner;             ///< The element wrapped inside this window.
   const std::string& title;  ///< The title of the window.

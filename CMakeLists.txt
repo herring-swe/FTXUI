@@ -1,20 +1,26 @@
-cmake_minimum_required(VERSION 3.12)
+option(FTXUI_BUILD_DOCS "Set to ON to build docs" OFF)
+option(FTXUI_BUILD_EXAMPLES "Set to ON to build examples" OFF)
+option(FTXUI_BUILD_MODULES "Build the C++20 modules" OFF)
+option(FTXUI_BUILD_TESTS "Set to ON to build tests" OFF)
+option(FTXUI_BUILD_TESTS_FUZZER "Set to ON to enable fuzzing" OFF)
+option(FTXUI_CLANG_TIDY "Execute clang-tidy" OFF)
+option(FTXUI_DEV_WARNINGS "Enable more compiler warnings and warnings as errors" OFF)
+option(FTXUI_ENABLE_COVERAGE "Execute code coverage" OFF)
+option(FTXUI_ENABLE_INSTALL "Generate the install target" ON)
+option(FTXUI_QUIET "Set to ON for FTXUI to be quiet" OFF)
+
+if (FTXUI_BUILD_MODULES)
+  cmake_minimum_required(VERSION 3.28.2)
+else()
+  cmake_minimum_required(VERSION 3.12)
+endif()
 
 project(ftxui
   LANGUAGES CXX
-  VERSION 5.0.0
+  VERSION 6.1.9
   DESCRIPTION "C++ Functional Terminal User Interface."
 )
 
-option(FTXUI_QUIET "Set to ON for FTXUI to be quiet" OFF)
-option(FTXUI_BUILD_EXAMPLES "Set to ON to build examples" OFF)
-option(FTXUI_BUILD_DOCS "Set to ON to build docs" OFF)
-option(FTXUI_BUILD_TESTS "Set to ON to build tests" OFF)
-option(FTXUI_BUILD_TESTS_FUZZER "Set to ON to enable fuzzing" OFF)
-option(FTXUI_ENABLE_INSTALL "Generate the install target" ON)
-option(FTXUI_CLANG_TIDY "Execute clang-tidy" OFF)
-option(FTXUI_ENABLE_COVERAGE "Execute code coverage" OFF)
-option(FTXUI_DEV_WARNINGS "Enable more compiler warnings and warnings as errors" OFF)
 
 set(FTXUI_MICROSOFT_TERMINAL_FALLBACK_HELP_TEXT "On windows, assume the \
 terminal used will be one of Microsoft and use a set of reasonnable fallback \
@@ -56,11 +62,12 @@ add_library(dom
   include/ftxui/dom/flexbox_config.hpp
   include/ftxui/dom/node.hpp
   include/ftxui/dom/requirement.hpp
+  include/ftxui/dom/selection.hpp
   include/ftxui/dom/take_any_args.hpp
   src/ftxui/dom/automerge.cpp
+  src/ftxui/dom/selection_style.cpp
   src/ftxui/dom/blink.cpp
   src/ftxui/dom/bold.cpp
-  src/ftxui/dom/hyperlink.cpp
   src/ftxui/dom/border.cpp
   src/ftxui/dom/box_helper.cpp
   src/ftxui/dom/box_helper.hpp
@@ -81,13 +88,16 @@ add_library(dom
   src/ftxui/dom/graph.cpp
   src/ftxui/dom/gridbox.cpp
   src/ftxui/dom/hbox.cpp
+  src/ftxui/dom/hyperlink.cpp
   src/ftxui/dom/inverted.cpp
+  src/ftxui/dom/italic.cpp
   src/ftxui/dom/linear_gradient.cpp
   src/ftxui/dom/node.cpp
   src/ftxui/dom/node_decorator.cpp
   src/ftxui/dom/paragraph.cpp
   src/ftxui/dom/reflect.cpp
   src/ftxui/dom/scroll_indicator.cpp
+  src/ftxui/dom/selection.cpp
   src/ftxui/dom/separator.cpp
   src/ftxui/dom/size.cpp
   src/ftxui/dom/spinner.cpp
@@ -134,26 +144,20 @@ add_library(component
   src/ftxui/component/resizable_split.cpp
   src/ftxui/component/screen_interactive.cpp
   src/ftxui/component/slider.cpp
+  src/ftxui/component/task.cpp
+  src/ftxui/component/task_internal.hpp
+  src/ftxui/component/task_queue.cpp
+  src/ftxui/component/task_queue.hpp
+  src/ftxui/component/task_runner.cpp
+  src/ftxui/component/task_runner.hpp
   src/ftxui/component/terminal_input_parser.cpp
   src/ftxui/component/terminal_input_parser.hpp
   src/ftxui/component/util.cpp
   src/ftxui/component/window.cpp
 )
 
-target_link_libraries(dom
-  PUBLIC screen
-)
-
-target_link_libraries(component
-  PUBLIC dom
-)
-
-if (NOT EMSCRIPTEN)
-  find_package(Threads)
-  target_link_libraries(component
-    PUBLIC Threads::Threads
-  )
-endif()
+target_link_libraries(dom PUBLIC screen)
+target_link_libraries(component PUBLIC dom)
 
 include(cmake/ftxui_set_options.cmake)
 ftxui_set_options(screen)
@@ -172,6 +176,13 @@ include(cmake/iwyu.cmake)
 include(cmake/ftxui_export.cmake)
 include(cmake/ftxui_install.cmake)
 include(cmake/ftxui_package.cmake)
+include(cmake/ftxui_modules.cmake)
 
 add_subdirectory(examples)
 add_subdirectory(doc)
+
+# You can generate ./examples_modules/ by running
+# ./tools/generate_examples_modules.sh
+if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/examples_modules/CMakeLists.txt")
+  add_subdirectory(examples_modules)
+endif()

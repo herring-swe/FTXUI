@@ -21,14 +21,23 @@ build/
 !flake.nix
 !ftxui.pc.in
 !iwyu.imp
+!WORKSPACE.bazel
+!BUILD.bazel
+!MODULE.bazel
+!.bazelrc
 
 # .github directory:
 !.github/**/*.yaml
 !.github/**/*.yml
+!.github/**/*.md
 
 # cmake directory:
 !cmake/**/*.in
 !cmake/**/*.cmake
+
+# bazel directory:
+!bazel/**/*.bzl
+!.bcr/*
 
 # doc directory:
 !doc/**/Doxyfile.in
@@ -55,9 +64,12 @@ build/
 !include/ftxui/**/*.cpp
 
 # src directory:
+!src/ftxui/*.cppm
 !src/ftxui/**/*.hpp
 !src/ftxui/**/*.cpp
+!src/ftxui/**/*.cppm
 
 # tools directory:
 !tools/**/*.sh
 !tools/**/*.cpp
+build/

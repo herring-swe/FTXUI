@@ -1,8 +1,105 @@
 Changelog
 =========
 
-current (development) 
----------------------
+Next
+====
+
+### Doc
+- Fix broken Doxygen output. See @markmandel in #1029.
+- Use Doxygen awesome. Add our own theme.
+- Break the documentation into several pages.
+
+### Build
+- Feature: Support C++20 modules. 
+  This requires:
+  - Using the Ninja or MSVC generator
+  - A recent Clang/GCC/MSVC compiler.
+  - Cmake 3.28 or higher.
+  Usage:
+  ```cpp
+  import ftxui;
+  import ftxui.component;
+  import ftxui.dom;
+  import ftxui.screen;
+  import ftxui.util;
+  ```
+  Thanks @mikomikotaishi for PR #1015.
+- Remove dependency on 'pthread'.
+
+### Component
+- Fix ScreenInteractive::FixedSize screen stomps on the preceding terminal
+  output. Thanks @zozowell in #1064.
+- Fix vertical `ftxui::Slider`. The "up" key was previously decreasing the
+  value. Thanks @its-pablo in #1093 for reporting the issue.
+
+
+6.1.9 (2025-05-07)
+------------
+
+### Build
+If all goes well (pending), ftxui should appear in the Bazel central repository.
+It can be imported into your project using the following lines:
+
+**MODULE.bazel**
+```bazel
+bazel_dep(name = "ftxui", version = "6.1.9")
+```
+
+Thanks @robinlinden and @kcc for the reviews.
+
+### dom
+- Bugfix: Restore the `dbox` behavior from ftxui 5.0.0. To apply bgcolor
+  blending between the two layers, a new `dboxBlend` will be added.
+
+6.1.8 (2025-05-01)
+------------------
+
+### Build
+- Feature: Support `bazel` build system. See #1032.
+  Proposed by Kostya Serebryany @kcc
+
+  **BUILD.bazel**
+  ```bazel
+  deps = [
+    // Depend on the whole library:
+    "@ftxui//:ftxui",
+
+    // Choose a specific submodule:
+    "@ftxui//:component",
+    "@ftxui//:dom",
+    "@ftxui//:screen",
+  ]
+  ```
+
+### Component
+- Bugfix: Fix a crash with ResizeableSplit. See #1023.
+  - Clamp screen size to terminal size.
+  - Disallow `ResizeableSplit` with negative size.
+
+### Dom
+- Bugfix: Disallow specifying a negative size constraint. See #1023.
+
+
+6.0.2 (2025-03-30)
+-----
+
+### Component
+- BugFix: Fix major crash on Windows affecting all components. See #1020
+- BugFix: Fix focusRelative.
+
+6.0.1 (2025-03-28)
+-----
+
+Same as v6.0.0.
+
+Due to a problem tag v6.0.0 was replaced. This isn't a good practice and affect
+developers that started using it in the short timeframe. Submitting a new
+release with the same content is the best way to fix this.
+
+See #1017 and #1019.
+
+6.0.0 (2025-03-23)
+-----
 
 ### Component
 - Feature: Add support for raw input. Allowing more keys to be detected.
@@ -16,6 +113,9 @@ current (development)
 - Feature: Add support for `Input`'s insert mode. Add `InputOption::insert`
   option. Added by @mingsheng13.
 - Feature: Add `DropdownOption` to configure the dropdown. See #826.
+- Feature: Add support for Selection. Thanks @clement-roblot. See #926.
+  - See `ScreenInteractive::GetSelection()`.
+  - See `ScreenInteractive::SelectionChange(...)` listener.
 - Bugfix/Breaking change: `Mouse transition`:
   - Detect when the mouse move, as opposed to being pressed.
     The Mouse::Moved motion was added.
@@ -39,11 +139,39 @@ current (development)
   component in its parent. See #932
 - Feature: Add `EntryState::index`. This allows to get the index of a menu entry.
   See #932
+- Feature: Add `SliderOption::on_change`. This allows to set a callback when the
+  slider value changes. See #938.
+- Bugfix: Handle `Dropdown` with no entries.
+- Bugfix: Fix crash in `LinearGradient` due to float precision and an off-by-one
+          mistake. See #998.
 
 ### Dom
+- Feature: Add `italic` decorator. For instance:
+  ```cpp
+  auto italic_text = text("Italic text") | italic;
+  ```
+  ```cpp
+  auto italic_text = italic(text("Italic text"));
+  ```
+  Proposed by @kenReneris in #1009.
 - Feature: Add `hscroll_indicator`. It display an horizontal indicator
   reflecting the current scroll position. Proposed by @ibrahimnasson in
   [issue 752](https://github.com/ArthurSonzogni/FTXUI/issues/752)
+- Feature: Add `extend_beyond_screen` option to `Dimension::Fit(..)`, allowing
+  the element to be larger than the screen. Proposed by @LordWhiro. See #572 and
+  #949.
+- Feature: Add support for Selection. Thanks @clement-roblot. See #926.
+  - See `selectionColor` decorator.
+  - See `selectionBackgroundColor` decorator.
+  - See `selectionForegroundColor` decorator.
+  - See `selectionStyle(style)` decorator.
+  - See `selectionStyleReset` decorator.
+- Breaking change: Change how "focus"/"select" are handled. This fixes the
+  behavior.
+- Breaking change: `Component::OnRender()` becomes the method to override to
+  render a component. This replaces `Component::Render()` that is still in use
+  to call the rendering method on the children. This change allows to fix a
+  couple of issues around focus handling.
 
 ### Screen
 - Feature: Add `Box::IsEmpty()`.

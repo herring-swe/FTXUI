@@ -1284,8 +1284,9 @@ bool IsCombining(uint32_t ucs) {
 }
 
 bool IsFullWidth(uint32_t ucs) {
-  if (ucs < 0x0300)  // Quick path: // NOLINT
+  if (ucs < 0x0300) {  // Quick path: // NOLINT
     return false;
+  }
 
   return Bisearch(ucs, g_full_width_characters);
 }
@@ -1561,7 +1562,7 @@ std::vector<WordBreakProperty> Utf8ToWordBreakProperty(
   return out;
 }
 
-/// Convert a UTF8 std::string into a std::wstring.
+/// Convert a std::wstring into a UTF8 std::string.
 std::string to_string(const std::wstring& s) {
   std::string out;
 
@@ -1633,7 +1634,7 @@ std::string to_string(const std::wstring& s) {
   return out;
 }
 
-/// Convert a std::wstring into a UTF8 std::string.
+/// Convert a UTF8 std::string into a std::wstring.
 std::wstring to_wstring(const std::string& s) {
   std::wstring out;
 

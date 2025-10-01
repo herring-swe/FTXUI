@@ -4,18 +4,16 @@
 #ifndef FTXUI_COMPONENT_SCREEN_INTERACTIVE_HPP
 #define FTXUI_COMPONENT_SCREEN_INTERACTIVE_HPP
 
-#include <atomic>                        // for atomic
-#include <ftxui/component/receiver.hpp>  // for Receiver, Sender
-#include <functional>                    // for function
-#include <memory>                        // for shared_ptr
-#include <string>                        // for string
-#include <thread>                        // for thread
-#include <variant>                       // for variant
+#include <atomic>      // for atomic
+#include <functional>  // for function
+#include <memory>      // for shared_ptr
+#include <string>      // for string
 
 #include "ftxui/component/animation.hpp"       // for TimePoint
 #include "ftxui/component/captured_mouse.hpp"  // for CapturedMouse
 #include "ftxui/component/event.hpp"           // for Event
 #include "ftxui/component/task.hpp"            // for Task, Closure
+#include "ftxui/dom/selection.hpp"             // for SelectionOption
 #include "ftxui/screen/screen.hpp"             // for Screen
 
 namespace ftxui {
@@ -26,6 +24,14 @@ struct Event;
 using Component = std::shared_ptr<ComponentBase>;
 class ScreenInteractivePrivate;
 
+namespace task {
+class TaskRunner;
+}
+
+/// @brief ScreenInteractive is a `Screen` that can handle events, run a main
+/// loop, and manage components.
+///
+/// @ingroup component
 class ScreenInteractive : public Screen {
  public:
   // Constructors:
@@ -35,6 +41,9 @@ class ScreenInteractive : public Screen {
   static ScreenInteractive FullscreenAlternateScreen();
   static ScreenInteractive FitComponent();
   static ScreenInteractive TerminalOutput();
+
+  // Destructor.
+  ~ScreenInteractive();
 
   // Options. Must be called before Loop().
   void TrackMouse(bool enable = true);
@@ -68,6 +77,10 @@ class ScreenInteractive : public Screen {
   void ForceHandleCtrlC(bool force);
   void ForceHandleCtrlZ(bool force);
 
+  // Selection API.
+  std::string GetSelection();
+  void SelectionChange(std::function<void()> callback);
+
  private:
   void ExitNow();
 
@@ -82,10 +95,16 @@ class ScreenInteractive : public Screen {
   void RunOnceBlocking(Component component);
 
   void HandleTask(Component component, Task& task);
+  bool HandleSelection(bool handled, Event event);
+  void RefreshSelection();
   void Draw(Component component);
   void ResetCursorPosition();
 
   void Signal(int signal);
+
+  void FetchTerminalEvents();
+
+  void PostAnimationTask();
 
   ScreenInteractive* suspended_screen_ = nullptr;
   enum class Dimension {
@@ -94,30 +113,26 @@ class ScreenInteractive : public Screen {
     Fullscreen,
     TerminalOutput,
   };
-  Dimension dimension_ = Dimension::Fixed;
-  bool use_alternative_screen_ = false;
-  ScreenInteractive(int dimx,
+  ScreenInteractive(Dimension dimension,
+                    int dimx,
                     int dimy,
-                    Dimension dimension,
                     bool use_alternative_screen);
+  const Dimension dimension_;
+  const bool use_alternative_screen_;
 
   bool track_mouse_ = true;
-
-  Sender<Task> task_sender_;
-  Receiver<Task> task_receiver_;
 
   std::string set_cursor_position;
   std::string reset_cursor_position;
 
   std::atomic<bool> quit_{false};
-  std::thread event_listener_;
-  std::thread animation_listener_;
   bool animation_requested_ = false;
   animation::TimePoint previous_animation_time_;
 
   int cursor_x_ = 1;
   int cursor_y_ = 1;
 
+  std::uint64_t frame_count_ = 0;
   bool mouse_captured = false;
   bool previous_frame_resized_ = false;
 
@@ -129,7 +144,29 @@ class ScreenInteractive : public Screen {
   // The style of the cursor to restore on exit.
   int cursor_reset_shape_ = 1;
 
+  // Selection API:
+  CapturedMouse selection_pending_;
+  struct SelectionData {
+    int start_x = -1;
+    int start_y = -1;
+    int end_x = -2;
+    int end_y = -2;
+    bool empty = true;
+    bool operator==(const SelectionData& other) const;
+    bool operator!=(const SelectionData& other) const;
+  };
+  SelectionData selection_data_;
+  SelectionData selection_data_previous_;
+  std::unique_ptr<Selection> selection_;
+  std::function<void()> selection_on_change_;
+
+  // PIMPL private implementation idiom (Pimpl).
+  struct Internal;
+  std::unique_ptr<Internal> internal_;
+
   friend class Loop;
+
+  Component component_;
 
  public:
   class Private {
